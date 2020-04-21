@@ -3,6 +3,7 @@ package com.dmytrod.cinemalist.data
 import com.dmytrod.cinemalist.BuildConfig
 import com.dmytrod.cinemalist.data.remote.TMDBApiService
 import com.dmytrod.cinemalist.data.repository.RemoteRepository
+import com.dmytrod.cinemalist.data.repository.ResponseHandler
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import org.koin.dsl.module
@@ -10,7 +11,8 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 val dataModule = module {
-    single { RemoteRepository(get()) }
+    single { ResponseHandler() }
+    single { RemoteRepository(get(), get()) }
     single {
         createTMDBApiService()
     }
