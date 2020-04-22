@@ -7,9 +7,9 @@ class RemoteRepository(
     private val service: TMDBApiService,
     private val responseHandler: ResponseHandler
 ) {
-    suspend fun getOngoingMovies(): ResponseHandler.Response<MoviesResponse> =
+    suspend fun getOngoingMovies(page: Int): ResponseHandler.Response<MoviesResponse> =
         try {
-            responseHandler.handleSuccess(service.getOngoingMovies(page = 1))
+            responseHandler.handleSuccess(service.getOngoingMovies(page = page))
         } catch (e: Throwable) {
             responseHandler.handleException(e)
         }

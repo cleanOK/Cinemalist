@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
+import androidx.paging.PagedListAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.ListAdapter
@@ -45,19 +46,20 @@ class OngoingMoviesFragment : Fragment() {
         movieRecycler.layoutManager =
             LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
         moviesViewModel.movieList.observe(viewLifecycleOwner, Observer {
-            when (it) {
-                is OngoingMoviesState.Success -> movieAdapter.submitList(it.data)
-                is OngoingMoviesState.Loading -> {
-                    //TODO show progress
-                }
-                is OngoingMoviesState.Empty -> {
-                    //TODO shoe empty state
-                }
-//                TODO show offline badge
-                is OngoingMoviesState.Error ->
-                    Snackbar.make(view, it.remoteError.errorMessageRes, Snackbar.LENGTH_SHORT)
-                        .show()
-            }
+            movieAdapter.submitList(it)
+//            when (it) {
+//                is OngoingMoviesState.Success -> movieAdapter.submitList(it.data)
+//                is OngoingMoviesState.Loading -> {
+//                    //TODO show progress
+//                }
+//                is OngoingMoviesState.Empty -> {
+//                    //TODO shoe empty state
+//                }
+////                TODO show offline badge
+//                is OngoingMoviesState.Error ->
+//                    Snackbar.make(view, it.remoteError.errorMessageRes, Snackbar.LENGTH_SHORT)
+//                        .show()
+//            }
         })
     }
 
@@ -66,7 +68,7 @@ class OngoingMoviesFragment : Fragment() {
         super.onDestroyView()
     }
 
-    class MovieAdapter : ListAdapter<MovieEntity, MovieAdapter.ViewHolder>(diffCallback) {
+    class MovieAdapter : PagedListAdapter<MovieEntity, MovieAdapter.ViewHolder>(diffCallback) {
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = ViewHolder(
             ItemMovieBinding.inflate(LayoutInflater.from(parent.context), parent, false)

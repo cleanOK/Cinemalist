@@ -2,7 +2,7 @@ package com.dmytrod.cinemalist.data.remote.model
 
 import com.google.gson.annotations.SerializedName
 
-data class MovieModel(
+data class MovieAPIModel(
     @SerializedName("adult")
     val adult: Boolean,
     @SerializedName("backdrop_path")
