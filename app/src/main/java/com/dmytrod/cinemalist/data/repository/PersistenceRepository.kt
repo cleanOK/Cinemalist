@@ -8,4 +8,8 @@ class PersistenceRepository(private val movieDatabase: MovieDatabase) {
     suspend fun storeList(list: List<MovieDBModel>) {
         movieDatabase.movieDao().insert(list)
     }
+
+    suspend fun deleteMovieList() {
+        movieDatabase.movieDao().deleteAll()
+    }
 }

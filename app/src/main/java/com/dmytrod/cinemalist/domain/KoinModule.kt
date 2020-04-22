@@ -1,11 +1,12 @@
 package com.dmytrod.cinemalist.domain
 
-import com.dmytrod.cinemalist.data.repository.ResponseHandler
 import com.dmytrod.cinemalist.domain.interactor.FetchMoviesByPage
 import com.dmytrod.cinemalist.domain.interactor.GetOngoingMovies
+import com.dmytrod.cinemalist.domain.interactor.RemoveMoviesFromDB
 import org.koin.dsl.module
 
 val domainModule = module {
-    single { GetOngoingMovies(get(), get()) }
+    single { GetOngoingMovies(get()) }
     single { FetchMoviesByPage(get(), get()) }
+    single { RemoveMoviesFromDB(get()) }
 }

@@ -20,4 +20,7 @@ interface MovieModelDao {
 
     @Delete
     suspend fun delete(movie: MovieDBModel)
+
+    @Query("DELETE FROM ${MovieDBModel.TABLE_NAME}")
+    suspend fun deleteAll()
 }

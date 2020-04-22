@@ -6,4 +6,5 @@
     <string name="no_internet">No internet connection</string>
     <string name="something_went_wrong">Something went wrong</string>
     <string name="server_error">Server error</string>
+    <string name="failed_to_store_to_db">Failed to store to DB</string>
 </resources>
