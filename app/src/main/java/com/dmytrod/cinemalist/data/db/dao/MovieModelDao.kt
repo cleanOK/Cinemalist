@@ -2,34 +2,42 @@ package com.dmytrod.cinemalist.data.db.dao
 
 import androidx.paging.DataSource
 import androidx.room.*
+import com.dmytrod.cinemalist.data.db.model.FavorableMovieModel
+import com.dmytrod.cinemalist.data.db.model.FavoriteDBModel
 import com.dmytrod.cinemalist.data.db.model.MovieDBModel
+import com.dmytrod.cinemalist.data.remote.model.MovieAPIModel
 
 @Dao
-interface MovieModelDao {
-    @Query("SELECT * FROM ${MovieDBModel.TABLE_NAME} WHERE apiId = :id")
-    suspend fun getMovieByApiId(id: Int): MovieDBModel?
+abstract class MovieModelDao : BaseDao<MovieDBModel>() {
 
-    @Query("SELECT * FROM ${MovieDBModel.TABLE_NAME}")
-    fun getMovies(): DataSource.Factory<Int, MovieDBModel>
+//    @Transaction
+//    @Query("SELECT * FROM ${FavoriteDBModel.TABLE_NAME} WHERE movie_api_id = :id")
+//    abstract suspend fun getFavorableMovieByApiId(id: Int): FavoriteDBModel?
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(movie: MovieDBModel)
+    @Query("SELECT * FROM ${MovieDBModel.TABLE_NAME} WHERE api_id = :id")
+    abstract suspend fun getMovieByApiId(id: Int): MovieDBModel?
 
     @Transaction
-    suspend fun insertOrUpdate(movies: List<MovieDBModel>) {
+    @Query("SELECT * FROM ${MovieDBModel.TABLE_NAME}")
+    abstract fun getFavorableMovies(): DataSource.Factory<Int, FavorableMovieModel>
+
+//    @Query("SELECT * FROM ${FavoriteDBModel.TABLE_NAME} WHERE movie_api_id = :id")
+//    suspend fun getFavorite(id: Int): FavoriteDBModel?
+
+    @Transaction
+    open suspend fun insertOrUpdateFromApi(movies: List<MovieAPIModel>) {
         movies.forEach {
             //Check for existing entities to avoid duplicates
-            val alreadyExistingModel = getMovieByApiId(it.apiId)
+            val alreadyExistingModel = getMovieByApiId(it.id)
+            val movieDBModel = MovieDBModel.fromRemote(it)
             if (alreadyExistingModel != null) {
-                it.uid = alreadyExistingModel.uid
+                movieDBModel.uid = alreadyExistingModel.uid
             }
-            insert(it)
+            insertOrUpdate(movieDBModel)
         }
     }
 
-    @Delete
-    suspend fun delete(movie: MovieDBModel)
-
     @Query("DELETE FROM ${MovieDBModel.TABLE_NAME}")
-    suspend fun deleteAll()
+    abstract suspend fun deleteAll()
+
 }

@@ -10,6 +10,7 @@ import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.dmytrod.cinemalist.R
 import com.dmytrod.cinemalist.databinding.FragmentMovieListBinding
+import com.dmytrod.cinemalist.domain.entity.MovieEntity
 import com.dmytrod.cinemalist.presentation.MovieViewModel
 import com.dmytrod.cinemalist.presentation.OngoingMoviesState
 import com.google.android.material.snackbar.Snackbar
@@ -18,7 +19,13 @@ import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 
 class OngoingMoviesFragment : Fragment() {
     private val moviesViewModel by sharedViewModel<MovieViewModel>()
-    private val movieAdapter = MovieAdapter()
+    private val onFavoriteClick: (item: MovieEntity) -> Unit = {
+        moviesViewModel.toggleFavorite(it)
+    }
+    private val onShareClick: (item: MovieEntity) -> Unit = {
+        //TODO
+    }
+    private val movieAdapter = MovieAdapter(onFavoriteClick, onShareClick)
     private var _binding: FragmentMovieListBinding? = null
 
     // This property is only valid between onCreateView and onDestroyView.

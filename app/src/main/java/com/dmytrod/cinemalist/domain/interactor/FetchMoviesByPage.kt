@@ -1,9 +1,7 @@
 package com.dmytrod.cinemalist.domain.interactor
 
-import android.util.Log
 import androidx.annotation.StringRes
 import com.dmytrod.cinemalist.R
-import com.dmytrod.cinemalist.data.db.model.MovieDBModel
 import com.dmytrod.cinemalist.data.repository.PersistenceRepository
 import com.dmytrod.cinemalist.data.repository.RemoteRepository
 import com.dmytrod.cinemalist.data.repository.ResponseHandler
@@ -22,7 +20,7 @@ class FetchMoviesByPage(
             is ResponseHandler.Response.Success -> {
                 val data = response.data
                 try {
-                    persistenceRepository.storeList(data.results.map(MovieDBModel.fromRemote))
+                    persistenceRepository.storeList(data.results)
                     Result.Success(data.totalPages, data.page)
                 } catch (e: Throwable) {
                     Result.Failure(R.string.failed_to_store_to_db, e)

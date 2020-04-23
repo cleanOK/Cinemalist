@@ -10,4 +10,8 @@
     <string name="failed_to_clean_db">Failed to clean DB</string>
     <string name="no_ongoing_movies">No ongoing movies</string>
     <string name="failed_refresh">Failed to refresh, try again</string>
+    <string name="fav">Favorit</string>
+    <string name="unfav">Unfavor</string>
+    <string name="failed_to_unfav">Failed to remove from favorites</string>
+    <string name="failed_to_fav">Failed to add to favorites</string>
 </resources>

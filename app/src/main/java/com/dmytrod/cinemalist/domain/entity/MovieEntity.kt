@@ -1,22 +1,24 @@
 package com.dmytrod.cinemalist.domain.entity
 
-import com.dmytrod.cinemalist.data.db.model.MovieDBModel
-import com.dmytrod.cinemalist.data.remote.model.MovieAPIModel
+import com.dmytrod.cinemalist.data.db.model.FavorableMovieModel
 
 data class MovieEntity(
     //TODO add default values
-    val id: Int,
+    val apiId: Int,
     val title: String?,
     val overview: String?,
+    val isFavorite: Boolean,
     val posterPath: String?
 ) {
     companion object Mapper {
-        val fromRemote = fun(it: MovieAPIModel): MovieEntity {
-            return MovieEntity(it.id, it.title, it.overview, it.posterPath)
-        }
 
-        val fromDB = fun(it: MovieDBModel): MovieEntity {
-            return MovieEntity(it.uid, it.title, it.overview, it.posterPath)
-        }
+        val fromDB = fun(it: FavorableMovieModel): MovieEntity =
+            MovieEntity(
+                it.movieDBModel.apiId,
+                it.movieDBModel.title,
+                it.movieDBModel.overview,
+                it.favoriteDBModel.isFavorite,
+                it.movieDBModel.posterPath
+            )
     }
 }

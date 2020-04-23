@@ -1,6 +1,5 @@
 package com.dmytrod.cinemalist.presentation
 
-import android.util.Log
 import android.util.SparseArray
 import androidx.lifecycle.MutableLiveData
 import androidx.paging.PagedList
@@ -37,6 +36,7 @@ class MovieBoundaryCallback(
     override fun onItemAtEndLoaded(itemAtEnd: MovieEntity) {
         if (nextPage > lastPage) return
         if (requestArray.get(nextPage) == null) {
+            //here loading of next page if necessary
             requestArray.put(nextPage, viewModelScope.launch {
                 fetchMoviesByPage.execute(nextPage)
                     .collect { handleNextPageResult(it) }
@@ -54,7 +54,6 @@ class MovieBoundaryCallback(
         nextPage = 1
     }
 
-    //TODO extract handle*Result functions to ViewModel
     private fun handleFirstPageResult(result: FetchMoviesByPage.Result) {
         when (result) {
             is FetchMoviesByPage.Result.Success -> {
@@ -69,7 +68,6 @@ class MovieBoundaryCallback(
         }
     }
 
-    //TODO extract handle*Result functions to ViewModel
     private fun handleNextPageResult(result: FetchMoviesByPage.Result) {
         when (result) {
             is FetchMoviesByPage.Result.Success -> {
@@ -77,7 +75,7 @@ class MovieBoundaryCallback(
                 nextPage = result.page + 1
             }
             is FetchMoviesByPage.Result.Failure -> {
-                //TODO
+                movieListState.value = OngoingMoviesState.Error(result.errorMessageRes)
             }
         }
     }
