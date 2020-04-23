@@ -8,4 +8,6 @@
     <string name="server_error">Server error</string>
     <string name="failed_to_store_to_db">Failed to store to DB</string>
     <string name="failed_to_clean_db">Failed to clean DB</string>
+    <string name="no_ongoing_movies">No ongoing movies</string>
+    <string name="failed_refresh">Failed to refresh, try again</string>
 </resources>

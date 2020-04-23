@@ -15,9 +15,6 @@ interface MovieModelDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(movie: MovieDBModel)
 
-//    @Insert(onConflict = OnConflictStrategy.REPLACE)
-//    suspend fun insert(movies: List<MovieDBModel>)
-
     @Transaction
     suspend fun insertOrUpdate(movies: List<MovieDBModel>) {
         movies.forEach {

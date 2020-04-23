@@ -1,5 +1,6 @@
 package com.dmytrod.cinemalist.domain.interactor
 
+import android.util.Log
 import androidx.annotation.StringRes
 import com.dmytrod.cinemalist.R
 import com.dmytrod.cinemalist.data.db.model.MovieDBModel
@@ -17,26 +18,21 @@ class FetchMoviesByPage(
     private val persistenceRepository: PersistenceRepository
 ) {
     fun execute(page: Int): Flow<Result> = flow {
-        when (val response = remoteRepository.getOngoingMovies(page)) {
+        val result = when (val response = remoteRepository.getOngoingMovies(page)) {
             is ResponseHandler.Response.Success -> {
-                val results = response.data.results
-                if (results.isEmpty()) {
-                    emit(Result.Success(0, 0))
-                    return@flow
-                }
+                val data = response.data
                 try {
-                    persistenceRepository.storeList(results.map(MovieDBModel.fromRemote))
-                    emit(Result.Success(response.data.totalPages, response.data.page))
+                    persistenceRepository.storeList(data.results.map(MovieDBModel.fromRemote))
+                    Result.Success(data.totalPages, data.page)
                 } catch (e: Throwable) {
-                    emit(Result.Failure(R.string.failed_to_store_to_db, e))
+                    Result.Failure(R.string.failed_to_store_to_db, e)
                 }
             }
             is ResponseHandler.Response.Error -> {
-                emit(
-                    Result.Failure(response.remoteError.errorMessageRes, response.remoteError.cause)
-                )
+                Result.Failure(response.remoteError.errorMessageRes, response.remoteError.cause)
             }
         }
+        emit(result)
     }
 
     sealed class Result {

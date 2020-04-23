@@ -25,8 +25,7 @@ class MovieBoundaryCallback(
     @InternalCoroutinesApi
     override fun onZeroItemsLoaded() {
         if (requestArray.get(1) == null) {
-            movieListState.value =
-                OngoingMoviesState.Loading
+            movieListState.value = OngoingMoviesState.Loading
             requestArray.put(1, viewModelScope.launch {
                 fetchMoviesByPage.execute(1)
                     .collect { handleFirstPageResult(it) }
@@ -53,8 +52,6 @@ class MovieBoundaryCallback(
         requestArray.clear()
         lastPage = 1
         nextPage = 1
-        Log.d("TEST", "reset")
-
     }
 
     //TODO extract handle*Result functions to ViewModel
@@ -63,11 +60,8 @@ class MovieBoundaryCallback(
             is FetchMoviesByPage.Result.Success -> {
                 lastPage = result.totalPages
                 nextPage = result.page + 1
-                movieListState.value = if (lastPage > 0) {
-                    OngoingMoviesState.Success
-                } else {
-                    OngoingMoviesState.Empty
-                }
+                movieListState.value =
+                    if (lastPage > 0) OngoingMoviesState.Success else OngoingMoviesState.Empty
             }
             is FetchMoviesByPage.Result.Failure -> {
                 movieListState.value = OngoingMoviesState.Error(result.errorMessageRes)

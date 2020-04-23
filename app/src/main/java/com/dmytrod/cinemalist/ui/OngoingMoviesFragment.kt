@@ -1,7 +1,6 @@
 package com.dmytrod.cinemalist.ui
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,14 +10,15 @@ import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.dmytrod.cinemalist.R
 import com.dmytrod.cinemalist.databinding.FragmentMovieListBinding
-import com.dmytrod.cinemalist.presentation.MoviesViewModel
+import com.dmytrod.cinemalist.presentation.MovieViewModel
 import com.dmytrod.cinemalist.presentation.OngoingMoviesState
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.InternalCoroutinesApi
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 
 class OngoingMoviesFragment : Fragment() {
-    private val moviesViewModel by sharedViewModel<MoviesViewModel>()
+    private val moviesViewModel by sharedViewModel<MovieViewModel>()
+    private val movieAdapter = MovieAdapter()
     private var _binding: FragmentMovieListBinding? = null
 
     // This property is only valid between onCreateView and onDestroyView.
@@ -31,48 +31,40 @@ class OngoingMoviesFragment : Fragment() {
     ): View? {
         _binding = DataBindingUtil.inflate(inflater, R.layout.fragment_movie_list, container, false)
         binding.lifecycleOwner = viewLifecycleOwner
+        binding.viewModel = moviesViewModel
         return binding.root
     }
 
     @InternalCoroutinesApi
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val movieRecycler = binding.movieRecycler
-        val movieAdapter = MovieAdapter()
-        movieRecycler.adapter = movieAdapter
-        movieRecycler.layoutManager =
-            LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
+        setupMovieRecycler()
         moviesViewModel.getMovieListState().observe(viewLifecycleOwner, Observer {
-            when (it) {
-                is OngoingMoviesState.Success -> {
-                    //TODO?
-                }
-                is OngoingMoviesState.Loading -> {
-                    //TODO show progress
-                }
-                is OngoingMoviesState.Empty -> {
-                    //TODO show empty state
-                }
-//                TODO show offline badge
-                is OngoingMoviesState.Error -> {
-                    Snackbar.make(view, it.errorMessageRes, Snackbar.LENGTH_SHORT)
-                        .show()
-                }
-            }
+            binding.movieRefresh.isRefreshing = it is OngoingMoviesState.Loading
+            if (it is OngoingMoviesState.Error) handleError(it)
         })
-        moviesViewModel.getPagedListLiveData().observe(viewLifecycleOwner, Observer {
-                binding.movieRefresh.isRefreshing = false
-                Log.d("TEST", "submit new list, size=${it.size}")
-                movieAdapter.submitList(it)
-        })
-        binding.movieRefresh.setOnRefreshListener {
-                Log.d("TEST", "refresh  list")
-            moviesViewModel.refreshMovieList()
-        }
+        moviesViewModel.getPagedListLiveData().observe(viewLifecycleOwner,
+            Observer { movieAdapter.submitList(it) })
+        binding.movieRefresh.setOnRefreshListener { moviesViewModel.refreshMovieList() }
     }
 
     override fun onDestroyView() {
         _binding = null
         super.onDestroyView()
+    }
+
+    private fun setupMovieRecycler() {
+        val movieRecycler = binding.movieRecycler
+        movieRecycler.adapter = movieAdapter
+        movieRecycler.layoutManager =
+            LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
+    }
+
+    private fun handleError(error: OngoingMoviesState.Error) {
+        if (!error.isHandled) {
+            Snackbar.make(requireView(), error.errorMessageRes, Snackbar.LENGTH_SHORT)
+                .show()
+            error.isHandled = true
+        }
     }
 }
