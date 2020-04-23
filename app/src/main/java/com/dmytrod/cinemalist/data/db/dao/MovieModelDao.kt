@@ -6,8 +6,8 @@ import com.dmytrod.cinemalist.data.db.model.MovieDBModel
 
 @Dao
 interface MovieModelDao {
-    @Query("SELECT * FROM ${MovieDBModel.TABLE_NAME} WHERE uid = :id")
-    suspend fun getMovie(id: Int): MovieDBModel
+    @Query("SELECT * FROM ${MovieDBModel.TABLE_NAME} WHERE apiId = :id")
+    suspend fun getMovieByApiId(id: Int): MovieDBModel?
 
     @Query("SELECT * FROM ${MovieDBModel.TABLE_NAME}")
     fun getMovies(): DataSource.Factory<Int, MovieDBModel>
@@ -15,8 +15,20 @@ interface MovieModelDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(movie: MovieDBModel)
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(movies: List<MovieDBModel>)
+//    @Insert(onConflict = OnConflictStrategy.REPLACE)
+//    suspend fun insert(movies: List<MovieDBModel>)
+
+    @Transaction
+    suspend fun insertOrUpdate(movies: List<MovieDBModel>) {
+        movies.forEach {
+            //Check for existing entities to avoid duplicates
+            val alreadyExistingModel = getMovieByApiId(it.apiId)
+            if (alreadyExistingModel != null) {
+                it.uid = alreadyExistingModel.uid
+            }
+            insert(it)
+        }
+    }
 
     @Delete
     suspend fun delete(movie: MovieDBModel)
