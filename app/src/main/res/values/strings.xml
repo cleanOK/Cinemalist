@@ -7,4 +7,5 @@
     <string name="something_went_wrong">Something went wrong</string>
     <string name="server_error">Server error</string>
     <string name="failed_to_store_to_db">Failed to store to DB</string>
+    <string name="failed_to_clean_db">Failed to clean DB</string>
 </resources>

@@ -14,6 +14,7 @@ import com.dmytrod.cinemalist.databinding.FragmentMovieListBinding
 import com.dmytrod.cinemalist.presentation.MoviesViewModel
 import com.dmytrod.cinemalist.presentation.OngoingMoviesState
 import com.google.android.material.snackbar.Snackbar
+import kotlinx.coroutines.InternalCoroutinesApi
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 
 class OngoingMoviesFragment : Fragment() {
@@ -33,6 +34,7 @@ class OngoingMoviesFragment : Fragment() {
         return binding.root
     }
 
+    @InternalCoroutinesApi
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val movieRecycler = binding.movieRecycler
@@ -49,7 +51,7 @@ class OngoingMoviesFragment : Fragment() {
                     //TODO show progress
                 }
                 is OngoingMoviesState.Empty -> {
-                    //TODO shoe empty state
+                    //TODO show empty state
                 }
 //                TODO show offline badge
                 is OngoingMoviesState.Error -> {
@@ -60,10 +62,11 @@ class OngoingMoviesFragment : Fragment() {
         })
         moviesViewModel.getPagedListLiveData().observe(viewLifecycleOwner, Observer {
                 binding.movieRefresh.isRefreshing = false
-                Log.d("TEST", "submit new list")
+                Log.d("TEST", "submit new list, size=${it.size}")
                 movieAdapter.submitList(it)
         })
         binding.movieRefresh.setOnRefreshListener {
+                Log.d("TEST", "refresh  list")
             moviesViewModel.refreshMovieList()
         }
     }

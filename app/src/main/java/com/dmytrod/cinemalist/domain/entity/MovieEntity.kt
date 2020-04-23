@@ -4,10 +4,11 @@ import com.dmytrod.cinemalist.data.db.model.MovieDBModel
 import com.dmytrod.cinemalist.data.remote.model.MovieAPIModel
 
 data class MovieEntity(
+    //TODO add default values
     val id: Int,
-    val title: String,
-    val overview: String,
-    val posterPath: String
+    val title: String?,
+    val overview: String?,
+    val posterPath: String?
 ) {
     companion object Mapper {
         val fromRemote = fun(it: MovieAPIModel): MovieEntity {

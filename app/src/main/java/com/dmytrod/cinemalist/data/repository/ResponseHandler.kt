@@ -9,10 +9,10 @@ class ResponseHandler {
     fun <T : Any> handleException(e: Throwable): Response<T> {
         return Response.Error(
             when (e) {
-                is SocketTimeoutException, is UnknownHostException -> RemoteError.NoInternet
-                is IOException -> RemoteError.ServerFailure
+                is SocketTimeoutException, is UnknownHostException -> RemoteError.NoInternet(e)
+                is IOException -> RemoteError.ServerFailure(e)
                 //TODO add "is HttpException"
-                else -> RemoteError.Unexpected
+                else -> RemoteError.Unexpected(e)
             }
         )
     }

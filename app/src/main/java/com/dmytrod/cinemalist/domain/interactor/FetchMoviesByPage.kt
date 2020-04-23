@@ -27,18 +27,20 @@ class FetchMoviesByPage(
                 try {
                     persistenceRepository.storeList(results.map(MovieDBModel.fromRemote))
                     emit(Result.Success(response.data.totalPages, response.data.page))
-                } catch (e: Exception) {
-                    emit(Result.Failure(R.string.failed_to_store_to_db))
+                } catch (e: Throwable) {
+                    emit(Result.Failure(R.string.failed_to_store_to_db, e))
                 }
             }
             is ResponseHandler.Response.Error -> {
-                emit(Result.Failure(response.remoteError.errorMessageRes))
+                emit(
+                    Result.Failure(response.remoteError.errorMessageRes, response.remoteError.cause)
+                )
             }
         }
     }
 
     sealed class Result {
         data class Success(val totalPages: Int, val page: Int) : Result()
-        data class Failure(@StringRes val errorMessageRes: Int) : Result()
+        data class Failure(@StringRes val errorMessageRes: Int, val e: Throwable) : Result()
     }
 }

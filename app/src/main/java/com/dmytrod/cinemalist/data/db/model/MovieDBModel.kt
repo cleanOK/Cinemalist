@@ -10,17 +10,16 @@ import com.dmytrod.cinemalist.data.remote.model.MovieAPIModel
 data class MovieDBModel(
     @PrimaryKey val uid: Int,
     @ColumnInfo(name = "title")
-    val title: String,
+    val title: String?,
     @ColumnInfo(name = "overview")
-    val overview: String,
+    val overview: String?,
     @ColumnInfo(name = "posterPath")
-    val posterPath: String
+    val posterPath: String?
 
 ) {
     companion object {
-        val fromRemote = fun(it: MovieAPIModel): MovieDBModel {
-            return MovieDBModel(it.id, it.title, it.overview, it.posterPath)
-        }
         const val TABLE_NAME = "movie"
+        val fromRemote = fun(it: MovieAPIModel): MovieDBModel =
+            MovieDBModel(it.id, it.title, it.overview, it.posterPath)
     }
 }
