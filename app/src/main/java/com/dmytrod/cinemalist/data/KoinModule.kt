@@ -5,9 +5,7 @@ import androidx.room.Room
 import com.dmytrod.cinemalist.BuildConfig
 import com.dmytrod.cinemalist.data.db.MovieDatabase
 import com.dmytrod.cinemalist.data.remote.TMDBApiService
-import com.dmytrod.cinemalist.data.repository.PersistenceRepository
-import com.dmytrod.cinemalist.data.repository.RemoteRepository
-import com.dmytrod.cinemalist.data.repository.ResponseHandler
+import com.dmytrod.cinemalist.data.repository.*
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import org.koin.android.ext.koin.androidContext
@@ -16,11 +14,11 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 val dataModule = module {
-    single { ResponseHandler() }
-    single { RemoteRepository(get(), get()) }
+    single<IResponseHandler> { ResponseHandler() }
+    single<IRemoteRepository> { RemoteRepository(get(), get()) }
     single { createTMDBApiService() }
     single { movieDatabase(androidContext()) }
-    single { PersistenceRepository(get()) }
+    single<IPersistenceRepository> { PersistenceRepository(get()) }
 }
 
 

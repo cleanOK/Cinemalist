@@ -6,23 +6,20 @@ import androidx.paging.LivePagedListBuilder
 import androidx.paging.PagedList
 import com.dmytrod.cinemalist.R
 import com.dmytrod.cinemalist.domain.entity.MovieEntity
-import com.dmytrod.cinemalist.domain.interactor.FetchMoviesByPage
-import com.dmytrod.cinemalist.domain.interactor.GetOngoingMovies
-import com.dmytrod.cinemalist.domain.interactor.RemoveMoviesFromDB
-import com.dmytrod.cinemalist.domain.interactor.ToggleFavoriteMovie
+import com.dmytrod.cinemalist.domain.interactor.*
 import kotlinx.coroutines.InternalCoroutinesApi
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 class MovieViewModel(
-    //TODO depend on abstraction
-    getOngoingMovies: GetOngoingMovies,
-    fetchMoviesByPage: FetchMoviesByPage,
-    private val toggleFavoriteMovie: ToggleFavoriteMovie,
-    private val removeMoviesFromDB: RemoveMoviesFromDB
+    getOngoingMovies: DataSourceFactoryInteractor<MovieEntity>,
+    fetchMoviesByPage: FlowInteractor<Int, PageData>,
+    private val toggleFavoriteMovie: FlowInteractor<MovieEntity, Unit>,
+    private val removeMoviesFromDB: FlowInteractor<Unit, Unit>
 ) : ViewModel() {
     private val movieListState = MutableLiveData<OngoingMoviesState>()
-    private val dataSourceFactory = getOngoingMovies.execute()
+
+    //TODO move to DI
     private val pagedListConfig = PagedList.Config.Builder()
         .setEnablePlaceholders(false)
         .setPrefetchDistance(15)
@@ -30,9 +27,10 @@ class MovieViewModel(
         .build()
     private val boundaryCallback =
         MovieBoundaryCallback(fetchMoviesByPage, viewModelScope, movieListState)
-    private val pagedListLiveData = LivePagedListBuilder(dataSourceFactory, pagedListConfig)
-        .setBoundaryCallback(boundaryCallback)
-        .build()
+    private val pagedListLiveData =
+        LivePagedListBuilder(getOngoingMovies.execute(), pagedListConfig)
+            .setBoundaryCallback(boundaryCallback)
+            .build()
 
     //state helpers for Data Binding
     val isListLoading = movieListState.map { it is OngoingMoviesState.Loading }
@@ -46,7 +44,7 @@ class MovieViewModel(
     fun refreshMovieList() {
         viewModelScope.launch {
             try {
-                removeMoviesFromDB.execute().collect {
+                removeMoviesFromDB.execute(Unit).collect {
                     pagedListLiveData.value?.dataSource?.invalidate()
                     boundaryCallback.reset()
                 }
@@ -60,21 +58,17 @@ class MovieViewModel(
 
     fun toggleFavorite(movieEntity: MovieEntity) {
         viewModelScope.launch {
-            try {
-                toggleFavoriteMovie.execute(movieEntity).collect {
-                    when (it) {
-                        is ToggleFavoriteMovie.Result.Success ->
-                            Log.d(
-                                "TEST",
-                                "movie ${movieEntity.title} is now ${if (movieEntity.isFavorite) "unfaved" else "faved"}"
-                            )
-                        is ToggleFavoriteMovie.Result.Failure -> {
-                            //TODO
-                        }
+            toggleFavoriteMovie.execute(movieEntity).collect {
+                when (it) {
+                    is Result.Success<Unit> ->
+                        Log.d(
+                            "TEST",
+                            "movie ${movieEntity.title} is now ${if (movieEntity.isFavorite) "unfaved" else "faved"}"
+                        )
+                    is Result.Failure<Unit> -> {
+                        //TODO handle error
                     }
                 }
-            } catch (e: Throwable) {
-                Log.e("TEST", "failed to toggle favorite movie ${movieEntity.title}", e)
             }
         }
     }

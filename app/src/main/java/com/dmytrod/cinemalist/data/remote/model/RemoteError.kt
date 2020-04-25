@@ -7,5 +7,4 @@ sealed class RemoteError(@StringRes val errorMessageRes: Int, val cause: Throwab
     data class NoInternet(val e: Throwable) : RemoteError(R.string.no_internet, e)
     data class ServerFailure(val e: Throwable) : RemoteError(R.string.server_error, e)
     data class Unexpected(val e: Throwable) : RemoteError(R.string.something_went_wrong, e)
-    //TODO add ApiError
 }

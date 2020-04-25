@@ -7,6 +7,7 @@ import com.dmytrod.cinemalist.data.remote.model.MovieAPIModel
 
 @Dao
 abstract class FavoriteDao : BaseDao<FavoriteDBModel>() {
+
     @Transaction
     open suspend fun insertOrIgnoreFromApi(movies: List<MovieAPIModel>) {
         insert(movies.map(FavoriteDBModel.fromRemote))

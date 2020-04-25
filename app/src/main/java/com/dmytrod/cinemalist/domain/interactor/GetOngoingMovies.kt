@@ -1,14 +1,15 @@
 package com.dmytrod.cinemalist.domain.interactor
 
 import androidx.paging.DataSource
+import com.dmytrod.cinemalist.data.repository.IPersistenceRepository
 import com.dmytrod.cinemalist.data.repository.PersistenceRepository
 import com.dmytrod.cinemalist.domain.entity.MovieEntity
 
 class GetOngoingMovies(
-    private val persistenceRepository: PersistenceRepository
-) {
+    private val persistenceRepository: IPersistenceRepository
+) : DataSourceFactoryInteractor<MovieEntity> {
 
-    fun execute(): DataSource.Factory<Int, MovieEntity> =
+    override fun execute(): DataSource.Factory<Int, MovieEntity> =
         persistenceRepository.getMovies().map(MovieEntity.fromDB)
 
     companion object {

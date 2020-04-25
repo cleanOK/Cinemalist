@@ -10,19 +10,12 @@ import com.dmytrod.cinemalist.data.remote.model.MovieAPIModel
 @Dao
 abstract class MovieModelDao : BaseDao<MovieDBModel>() {
 
-//    @Transaction
-//    @Query("SELECT * FROM ${FavoriteDBModel.TABLE_NAME} WHERE movie_api_id = :id")
-//    abstract suspend fun getFavorableMovieByApiId(id: Int): FavoriteDBModel?
-
     @Query("SELECT * FROM ${MovieDBModel.TABLE_NAME} WHERE api_id = :id")
     abstract suspend fun getMovieByApiId(id: Int): MovieDBModel?
 
     @Transaction
     @Query("SELECT * FROM ${MovieDBModel.TABLE_NAME}")
     abstract fun getFavorableMovies(): DataSource.Factory<Int, FavorableMovieModel>
-
-//    @Query("SELECT * FROM ${FavoriteDBModel.TABLE_NAME} WHERE movie_api_id = :id")
-//    suspend fun getFavorite(id: Int): FavoriteDBModel?
 
     @Transaction
     open suspend fun insertOrUpdateFromApi(movies: List<MovieAPIModel>) {

@@ -3,7 +3,6 @@ package com.dmytrod.cinemalist.domain.entity
 import com.dmytrod.cinemalist.data.db.model.FavorableMovieModel
 
 data class MovieEntity(
-    //TODO add default values
     val apiId: Int,
     val title: String?,
     val overview: String?,

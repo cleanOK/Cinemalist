@@ -23,7 +23,7 @@ class OngoingMoviesFragment : Fragment() {
         moviesViewModel.toggleFavorite(it)
     }
     private val onShareClick: (item: MovieEntity) -> Unit = {
-        //TODO
+        //TODO implement
     }
     private val movieAdapter = MovieAdapter(onFavoriteClick, onShareClick)
     private var _binding: FragmentMovieListBinding? = null
