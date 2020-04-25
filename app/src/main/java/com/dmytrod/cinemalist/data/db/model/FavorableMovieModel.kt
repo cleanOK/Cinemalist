@@ -1,13 +1,16 @@
 package com.dmytrod.cinemalist.data.db.model
 
-import androidx.room.Embedded
-import androidx.room.Relation
+import androidx.room.ColumnInfo
 
 data class FavorableMovieModel(
-    @Embedded val movieDBModel: MovieDBModel,
-    @Relation(
-        parentColumn = "api_id",
-        entityColumn = "movie_api_id"
-    )
-    val favoriteDBModel: FavoriteDBModel
+    @ColumnInfo(name = "api_id")
+    val apiId: Int,
+    @ColumnInfo(name = "title")
+    val title: String?,
+    @ColumnInfo(name = "overview")
+    val overview: String?,
+    @ColumnInfo(name = "poster_path")
+    val posterPath: String?,
+    @ColumnInfo(name = "is_favorite")
+    var isFavorite: Boolean
 )

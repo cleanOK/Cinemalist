@@ -12,12 +12,6 @@ data class MovieEntity(
     companion object Mapper {
 
         val fromDB = fun(it: FavorableMovieModel): MovieEntity =
-            MovieEntity(
-                it.movieDBModel.apiId,
-                it.movieDBModel.title,
-                it.movieDBModel.overview,
-                it.favoriteDBModel.isFavorite,
-                it.movieDBModel.posterPath
-            )
+            MovieEntity(it.apiId, it.title, it.overview, it.isFavorite, it.posterPath)
     }
 }

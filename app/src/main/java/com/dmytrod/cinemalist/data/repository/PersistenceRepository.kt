@@ -6,7 +6,7 @@ import com.dmytrod.cinemalist.data.remote.model.MovieAPIModel
 import com.dmytrod.cinemalist.domain.entity.MovieEntity
 
 class PersistenceRepository(private val movieDatabase: MovieDatabase) : IPersistenceRepository {
-    override fun getMovies() = movieDatabase.movieDao().getFavorableMovies()
+    override fun getMovies() = movieDatabase.movieDao().getFavoriteMovies()
 
     override suspend fun storeList(list: List<MovieAPIModel>) {
         movieDatabase.movieDao().insertOrUpdateFromApi(list)
