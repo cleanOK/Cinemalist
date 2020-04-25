@@ -5,6 +5,9 @@ import android.view.ViewGroup
 import androidx.paging.PagedListAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.bitmap.CircleCrop
+import com.dmytrod.cinemalist.R
 import com.dmytrod.cinemalist.databinding.ItemMovieBinding
 import com.dmytrod.cinemalist.domain.entity.MovieEntity
 
@@ -31,12 +34,17 @@ class MovieAdapter(
         private val onFavoriteClick: (item: MovieEntity) -> Unit,
         private val onShareClick: (item: MovieEntity) -> Unit
     ) : RecyclerView.ViewHolder(binding.root) {
-
         fun bind(item: MovieEntity?) {
             if (item == null) {
                 //case when PagedList.Config has setEnablePlaceholders(true)
             } else {
                 binding.movie = item
+//                Glide.with(itemView)
+//                    .load(item.posterPath)
+//                    .placeholder(android.R.drawable.presence_video_away)
+//                    .error(android.R.drawable.presence_video_away)
+//                    .into(binding.posterView)
+
                 binding.favoriteView.setOnClickListener {
                     onFavoriteClick.invoke(item)
                 }

@@ -1,5 +1,6 @@
 package com.dmytrod.cinemalist.ui.home
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -22,8 +23,9 @@ abstract class BaseMoviesFragment : Fragment() {
         moviesViewModel.toggleFavorite(it)
     }
     private val onShareClick: (item: MovieEntity) -> Unit = {
-        //TODO implement
+        shareMovie(it)
     }
+
     private val movieAdapter = MovieAdapter(onFavoriteClick, onShareClick)
     private var _binding: FragmentMovieListBinding? = null
 
@@ -65,6 +67,7 @@ abstract class BaseMoviesFragment : Fragment() {
     private fun setupMovieRecycler() {
         val movieRecycler = binding.movieRecycler
         movieRecycler.adapter = movieAdapter
+        movieRecycler.addItemDecoration(ItemOffsetDecoration(resources.displayMetrics))
         movieRecycler.layoutManager =
             LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
     }
@@ -75,5 +78,16 @@ abstract class BaseMoviesFragment : Fragment() {
                 .show()
             error.isHandled = true
         }
+    }
+
+    private fun shareMovie(item: MovieEntity) {
+        val sendIntent: Intent = Intent().apply {
+            action = Intent.ACTION_SEND
+            putExtra(Intent.EXTRA_TEXT, item.title)
+            type = "text/plain"
+        }
+
+        val shareIntent = Intent.createChooser(sendIntent, null)
+        startActivity(shareIntent)
     }
 }

@@ -14,4 +14,6 @@
     <string name="unfav">Unfavor</string>
     <string name="failed_to_unfav">Failed to remove from favorites</string>
     <string name="failed_to_fav">Failed to add to favorites</string>
+    <string name="ongoing_movies_title">Ongoing</string>
+    <string name="favorite_movies_title">Favorite</string>
 </resources>
