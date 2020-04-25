@@ -1,4 +1,4 @@
-package com.dmytrod.cinemalist.ui
+package com.dmytrod.cinemalist.ui.home
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -11,13 +11,16 @@ import com.dmytrod.cinemalist.domain.entity.MovieEntity
 class MovieAdapter(
     private val onFavoriteClick: (item: MovieEntity) -> Unit,
     private val onShareClick: (item: MovieEntity) -> Unit
-) : PagedListAdapter<MovieEntity, MovieAdapter.ViewHolder>(diffCallback) {
+) : PagedListAdapter<MovieEntity, MovieAdapter.ViewHolder>(
+    diffCallback
+) {
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = ViewHolder(
-        ItemMovieBinding.inflate(LayoutInflater.from(parent.context), parent, false),
-        onFavoriteClick,
-        onShareClick
-    )
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) =
+        ViewHolder(
+            ItemMovieBinding.inflate(LayoutInflater.from(parent.context), parent, false),
+            onFavoriteClick,
+            onShareClick
+        )
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.bind(getItem(position))

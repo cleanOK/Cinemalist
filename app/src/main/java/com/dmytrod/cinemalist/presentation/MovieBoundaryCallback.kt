@@ -16,7 +16,7 @@ import kotlinx.coroutines.launch
 class MovieBoundaryCallback(
     private val fetchMoviesByPage: FlowInteractor<Int, PageData>,
     private val viewModelScope: CoroutineScope,
-    private val movieListState: MutableLiveData<OngoingMoviesState>
+    private val movieListState: MutableLiveData<MovieListState>
 ) :
     PagedList.BoundaryCallback<MovieEntity>() {
     private val requestArray = SparseArray<Job>()
@@ -26,7 +26,7 @@ class MovieBoundaryCallback(
     @InternalCoroutinesApi
     override fun onZeroItemsLoaded() {
         if (requestArray.get(1) == null) {
-            movieListState.value = OngoingMoviesState.Loading
+            movieListState.value = MovieListState.Loading
             requestArray.put(1, viewModelScope.launch {
                 fetchMoviesByPage.execute(1)
                     .collect { handleFirstPageResult(it) }
@@ -60,7 +60,7 @@ class MovieBoundaryCallback(
         handlePageResult(result)
         if (result is Result.Success<PageData>) {
             movieListState.value =
-                if (lastPage > 0) OngoingMoviesState.Success else OngoingMoviesState.Empty
+                if (lastPage > 0) MovieListState.Success else MovieListState.Empty
         }
     }
 
@@ -71,7 +71,7 @@ class MovieBoundaryCallback(
                 nextPage = result.data.page + 1
             }
             is Result.Failure<PageData> -> {
-                movieListState.value = OngoingMoviesState.Error(result.errorMessageRes)
+                movieListState.value = MovieListState.Error(result.errorMessageRes)
             }
         }
     }

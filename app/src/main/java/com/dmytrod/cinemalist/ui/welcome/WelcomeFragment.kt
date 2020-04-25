@@ -1,4 +1,4 @@
-package com.dmytrod.cinemalist.ui
+package com.dmytrod.cinemalist.ui.welcome
 
 import android.os.Bundle
 import android.view.LayoutInflater

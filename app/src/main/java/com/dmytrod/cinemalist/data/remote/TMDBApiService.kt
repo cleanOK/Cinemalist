@@ -13,6 +13,6 @@ interface TMDBApiService {
     ): MoviesResponse
 
     companion object {
-        const val API_KEY = "989dd0a72eef8a89fb30f6027eb83fc7"
+        private const val API_KEY = "989dd0a72eef8a89fb30f6027eb83fc7"
     }
 }

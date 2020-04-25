@@ -6,7 +6,7 @@
 
         <variable
             name="viewModel"
-            type="com.dmytrod.cinemalist.presentation.MovieViewModel" />
+            type="com.dmytrod.cinemalist.presentation.viewmodel.BaseMoviesViewModel" />
     </data>
 
     <FrameLayout

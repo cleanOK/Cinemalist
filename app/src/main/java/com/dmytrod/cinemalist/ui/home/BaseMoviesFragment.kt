@@ -1,4 +1,4 @@
-package com.dmytrod.cinemalist.ui
+package com.dmytrod.cinemalist.ui.home
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -11,14 +11,13 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.dmytrod.cinemalist.R
 import com.dmytrod.cinemalist.databinding.FragmentMovieListBinding
 import com.dmytrod.cinemalist.domain.entity.MovieEntity
-import com.dmytrod.cinemalist.presentation.MovieViewModel
-import com.dmytrod.cinemalist.presentation.OngoingMoviesState
+import com.dmytrod.cinemalist.presentation.MovieListState
+import com.dmytrod.cinemalist.presentation.viewmodel.BaseMoviesViewModel
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.InternalCoroutinesApi
-import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 
-class OngoingMoviesFragment : Fragment() {
-    private val moviesViewModel by sharedViewModel<MovieViewModel>()
+abstract class BaseMoviesFragment : Fragment() {
+    protected abstract val moviesViewModel: BaseMoviesViewModel
     private val onFavoriteClick: (item: MovieEntity) -> Unit = {
         moviesViewModel.toggleFavorite(it)
     }
@@ -47,13 +46,16 @@ class OngoingMoviesFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         setupMovieRecycler()
         moviesViewModel.getMovieListState().observe(viewLifecycleOwner, Observer {
-            binding.movieRefresh.isRefreshing = it is OngoingMoviesState.Loading
-            if (it is OngoingMoviesState.Error) handleError(it)
+            binding.movieRefresh.isRefreshing = it is MovieListState.Loading
+            if (it is MovieListState.Error) handleError(it)
         })
-        moviesViewModel.getPagedListLiveData().observe(viewLifecycleOwner,
+        moviesViewModel.pagedListLiveData.observe(viewLifecycleOwner,
             Observer { movieAdapter.submitList(it) })
+        binding.movieRefresh.isEnabled = isRefreshEnabled()
         binding.movieRefresh.setOnRefreshListener { moviesViewModel.refreshMovieList() }
     }
+
+    protected abstract fun isRefreshEnabled(): Boolean
 
     override fun onDestroyView() {
         _binding = null
@@ -67,7 +69,7 @@ class OngoingMoviesFragment : Fragment() {
             LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
     }
 
-    private fun handleError(error: OngoingMoviesState.Error) {
+    private fun handleError(error: MovieListState.Error) {
         if (!error.isHandled) {
             Snackbar.make(requireView(), error.errorMessageRes, Snackbar.LENGTH_SHORT)
                 .show()

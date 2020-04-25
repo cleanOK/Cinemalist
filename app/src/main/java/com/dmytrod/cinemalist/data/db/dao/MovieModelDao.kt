@@ -17,7 +17,7 @@ abstract class MovieModelDao : BaseDao<MovieDBModel>() {
     @Query(
         "SELECT movie.api_id, movie.overview, movie.poster_path, movie.title, favorite.is_favorite FROM movie, favorite WHERE movie.api_id == favorite.movie_api_id"
     )
-    abstract fun getFavorableMovies(): DataSource.Factory<Int, FavorableMovieModel>
+    abstract fun getAllMovies(): DataSource.Factory<Int, FavorableMovieModel>
 
     @Query(
         "SELECT movie.api_id, movie.overview, movie.poster_path, movie.title, favorite.is_favorite FROM movie, favorite WHERE movie.api_id == favorite.movie_api_id AND favorite.is_favorite = 1"
