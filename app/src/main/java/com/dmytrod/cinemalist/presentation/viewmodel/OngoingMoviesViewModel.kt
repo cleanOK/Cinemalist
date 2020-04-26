@@ -1,6 +1,5 @@
 package com.dmytrod.cinemalist.presentation.viewmodel
 
-import android.util.Log
 import androidx.lifecycle.viewModelScope
 import androidx.paging.LivePagedListBuilder
 import com.dmytrod.cinemalist.R
@@ -13,6 +12,7 @@ import com.dmytrod.cinemalist.presentation.MovieListState
 import kotlinx.coroutines.InternalCoroutinesApi
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
+import timber.log.Timber
 
 class OngoingMoviesViewModel(
     getMovies: DataSourceFactoryInteractor<MovieEntity>,
@@ -25,7 +25,7 @@ class OngoingMoviesViewModel(
         MovieBoundaryCallback(fetchMoviesByPage, viewModelScope, movieListState)
 
     override fun getPagedListDataBuilder(): LivePagedListBuilder<Int, MovieEntity> {
-        Log.d("TEST", "boundary callback set")
+        Timber.d("boundary callback set")
         return super.getPagedListDataBuilder()
             .setBoundaryCallback(boundaryCallback)
     }
@@ -35,12 +35,11 @@ class OngoingMoviesViewModel(
         viewModelScope.launch {
             try {
                 removeMoviesFromDB.execute(Unit).collect {
-                    //TODO handle Result
                     pagedListLiveData.value?.dataSource?.invalidate()
                     boundaryCallback.reset()
                 }
             } catch (e: Throwable) {
-                Log.e("TEST", "refreshing failed", e)
+                Timber.e(e, "refreshing failed")
                 movieListState.value =
                     MovieListState.Error(
                         errorMessageRes = R.string.failed_refresh

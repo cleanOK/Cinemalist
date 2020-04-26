@@ -1,6 +1,5 @@
 package com.dmytrod.cinemalist.presentation.viewmodel
 
-import android.util.Log
 import androidx.lifecycle.*
 import androidx.paging.LivePagedListBuilder
 import androidx.paging.PagedList
@@ -12,6 +11,7 @@ import com.dmytrod.cinemalist.domain.interactor.Result
 import com.dmytrod.cinemalist.presentation.MovieListState
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
+import timber.log.Timber
 
 abstract class BaseMoviesViewModel(
     getMovies: DataSourceFactoryInteractor<MovieEntity>,
@@ -41,12 +41,9 @@ abstract class BaseMoviesViewModel(
             toggleFavoriteMovie.execute(movieEntity).collect {
                 when (it) {
                     is Result.Success<Unit> ->
-                        Log.d(
-                            "TEST",
-                            "movie ${movieEntity.title} is now ${if (movieEntity.isFavorite) "unfaved" else "faved"}"
-                        )
+                        Timber.d("movie ${movieEntity.title} is now ${if (movieEntity.isFavorite) "unfaved" else "faved"}")
                     is Result.Failure<Unit> -> {
-                        //TODO handle error
+                        //Doesn't need UI handling
                     }
                 }
             }

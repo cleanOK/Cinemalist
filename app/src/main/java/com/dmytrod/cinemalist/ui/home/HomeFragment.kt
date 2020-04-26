@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.OnBackPressedCallback
 import androidx.annotation.StringRes
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.adapter.FragmentStateAdapter
@@ -13,6 +14,13 @@ import kotlinx.android.synthetic.main.fragment_home.*
 
 class HomeFragment : Fragment() {
     private val pageFactory = Page.values()
+    private val callback = object : OnBackPressedCallback(true) {
+        override fun handleOnBackPressed() {
+            //Don't return to Welcome screen
+            requireActivity().finish()
+        }
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -21,6 +29,7 @@ class HomeFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, callback)
         viewPager.adapter = MoviesFragmentAdapter(pageFactory, this)
         TabLayoutMediator(tabs, viewPager) { tab, position ->
             tab.text = getString(pageFactory[position].pageName)

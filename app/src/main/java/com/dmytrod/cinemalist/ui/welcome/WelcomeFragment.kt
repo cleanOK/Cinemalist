@@ -20,10 +20,6 @@ class WelcomeFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        loginWithFB.setOnClickListener {
-            Snackbar.make(view, "Not implemented yet", Snackbar.LENGTH_SHORT)
-                .show()
-        }
         skip.setOnClickListener {
             findNavController().navigate(R.id.openHome)
         }
