@@ -8,11 +8,8 @@ interface TMDBApiService {
 
     @GET("movie/now_playing")
     suspend fun getOngoingMovies(
-        @Query("api_key") apiKey: String = API_KEY,
+        @Query("api_key") apiKey: String,
         @Query("page") page: Int
     ): MoviesResponse
 
-    companion object {
-        private const val API_KEY = "989dd0a72eef8a89fb30f6027eb83fc7"
-    }
 }

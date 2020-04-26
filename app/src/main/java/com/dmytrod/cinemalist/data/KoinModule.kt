@@ -13,9 +13,10 @@ import org.koin.dsl.module
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
+const val API_KEY = "989dd0a72eef8a89fb30f6027eb83fc7"
 val dataModule = module {
     single<IResponseHandler> { ResponseHandler() }
-    single<IRemoteRepository> { RemoteRepository(get(), get()) }
+    single<IRemoteRepository> { RemoteRepository(get(), API_KEY, get()) }
     single { createTMDBApiService() }
     single { movieDatabase(androidContext()) }
     single<IPersistenceRepository> { PersistenceRepository(get()) }
